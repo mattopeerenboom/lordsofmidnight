@@ -1,0 +1,14 @@
+call renamefiles 0
+call renamefiles 1
+call renamefiles 2
+call renamefiles 3
+call renamefiles 4
+call renamefiles 5
+call renamefiles 6
+call renamefiles 7
+call renamefiles 8
+call renamefiles 9
+call renamefiles a
+call renamefiles b
+call renamefiles c
+call renamefiles d

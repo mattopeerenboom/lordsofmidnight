@@ -1,0 +1,19 @@
+0.gif 881 - mountains
+1.gif 16 - citadels
+2.gif 589 - forest
+4.gif 20 - tower
+d.gif 33 - cavern
+3.gif 16 - henge
+5.gif 92 - village
+c.gif 93 - lith
+6.gif 367 - downs
+7.gif 86 - keep
+8.gif 25 - snowhall
+b.gif 73 - ruins
+
+9.gif 69 - lake
+a.gif 289 - icy wastes
+
+
+e.gif - null
+f.gif 1509 - null

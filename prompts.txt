@@ -1,0 +1,88 @@
+Castles
+
+sdXL_v10VAEFix.safetensors
+medieval huge white stone castle, snow, (((photorealistic))), Intricate, High Detail, Sharp focus, dramatic,  ((eye level view)), standalone, transparent edges, cinematic
+canvas frame, cartoon,((bad art)),((close up)),((b&w)), weird colors, blurry, (((duplicate))), [out of frame], out of frame,  gross proportions, Photoshop, out of frame, bad art, text, ((blurry)), ((shadow)), low angle, high angle, logo, flag
+DPM++ SDE 
+Karras
+24
+1024x576
+Batch count -100
+CFG Scale 9.9
+(SDXL) Only Generate Transparent Image (Attention Injection)
+
+
+Towers
+
+sdXL_v10VAEFix.safetensors
+medieval white stone tower, snow, (((photorealistic))), Intricate, High Detail, Sharp focus, dramatic,  ((eye level view)), standalone, transparent edges, cinematic
+canvas frame, cartoon,((bad art)),((close up)),((b&w)), weird colors, blurry, (((duplicate))), [out of frame], out of frame,  gross proportions, Photoshop, out of frame, bad art, text, ((blurry)), ((shadow)), low angle, high angle, logo, flag
+DPM++ SDE 
+Karras
+24
+448x1024
+Batch count -100
+CFG Scale 9.9
+(SDXL) Only Generate Transparent Image (Attention Injection)
+
+Mountains - img2img
+sdXL_v10VAEFix.safetensors
+mountain, snow, (((photorealistic))), Intricate, High Detail, Sharp focus, dramatic,  ((eye level view)), standalone, transparent edges, cinematic
+canvas frame, cartoon,((bad art)),((close up)),((b&w)), weird colors, blurry, (((duplicate))), [out of frame], out of frame,  gross proportions, Photoshop, out of frame, bad art, text, ((blurry)), ((shadow)), low angle, high angle, logo, flag
+DPM++ 3M SDE
+Automatic
+1024x640
+CFG scale - 7
+denoise 0.97
+
+Forest - img2img
+sdXL_v10VAEFix.safetensors
+snowy forest, green and white, (((photorealistic))), Intricate, High Detail, Sharp focus, dramatic,  ((eye level view)), standalone, transparent edges, cinematic
+canvas frame, cartoon,((bad art)),((close up)),((b&w)), weird colors, blurry, (((duplicate))), [out of frame], out of frame,  gross proportions, Photoshop, out of frame, bad art, text, ((blurry)), ((shadow)), low angle, high angle, logo, flag
+DPM2
+Automatic
+1536x512
+CFG scale - 7
+denoise 0.7
+
+Cavern - img2img
+sdXL_v10VAEFix.safetensors
+snowy cavern, entrance, (((photorealistic))), Intricate, High Detail, Sharp focus, dramatic,  ((eye level view)), standalone, transparent edges, cinematic
+canvas frame, cartoon,((bad art)),((close up)),((b&w)), weird colors, blurry, (((duplicate))), [out of frame], out of frame,  gross proportions, Photoshop, out of frame, bad art, text, ((blurry)), ((shadow)), low angle, high angle, logo, flag
+DPM2
+Automatic
+2048x512
+CFG scale - 14
+denoise 0.9
+
+Henge - img2img
+sdXL_v10VAEFix.safetensors
+snowy stone henge, (((photorealistic))), Intricate, High Detail, Sharp focus, dramatic,  ((eye level view)), standalone, transparent edges, cinematic
+canvas frame, cartoon,((bad art)),((close up)),((b&w)), weird colors, blurry, (((duplicate))), [out of frame], out of frame,  gross proportions, Photoshop, out of frame, bad art, text, ((blurry)), ((shadow)), low angle, high angle, logo, flag
+DPM2
+Automatic
+2048x512
+CFG scale - 14
+denoise 0.9
+
+Village - img2img
+sdXL_v10VAEFix.safetensors
+snowy medieval village, (((photorealistic))), Intricate, High Detail, Sharp focus, dramatic,  ((eye level view)), standalone, transparent edges, cinematic
+canvas frame, cartoon,((bad art)),((close up)),((b&w)), weird colors, blurry, (((duplicate))), [out of frame], out of frame,  gross proportions, Photoshop, out of frame, bad art, text, ((blurry)), ((shadow)), low angle, high angle, logo, flag
+DPM2
+Automatic
+2048x512
+CFG scale - 14
+denoise 0.9
+
+keep
+front of small medieval white stone fortress
+
+snowhall
+front of small ancient white igloo
+
+ruins
+collapsed medieval castle ruins, snow, falling down, state of disrepair, dilapidated, partial walls, collapsed wall, face on, (((photorealistic))), Intricate, High Detail, Sharp focus, dramatic,  ((eye level view)), standalone, transparent edges, cinematic
+
+
+snowy natural pond

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    @font-face {
+        font-family: 'Birch Leaf';
+        src: url('assets/BirchLeaf.woff') format('woff');
+    }
+
+    /* Styling for the fixed div */
+    #fixedTextDiv {
+        position: absolute;
+        /* Keeps it fixed in place */
+        top: 20px;
+        /* Distance from the top of the viewport */
+        left: 20px;
+        /* Distance from the left of the viewport */
+        color: white;
+        /* Text color */
+        font-family: 'Birch Leaf', sans-serif;
+        /* Font family */
+        font-size: 24px;
+        /* Font size */
+        font-weight: normal;
+        /* Bold text */
+        padding: 10px;
+        /* Padding around the text */
+        z-index: 1000;
+        /* Keeps it on top of other elements */
+    }
+</style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lords Of Midnight Map With AI Artwork Navigator</title>
+</head>
+
+<body>
+    <canvas id="myCanvas" width="1280" height="720" style="border:1px solid black;"></canvas>
+    <div id="fixedTextDiv">
+
+    </div>
+    <script src="map.js"></script>
+    <script src="locations.js"></script>
+    <script>
+
+        window.onload = async function () {
+            redraw();
+        };
+
+        document.addEventListener('keydown', (event) => {
+            const move = {
+                //todo, should check user doesn't walk on icy wastes in main map area
+                //todo, if user walks ne into icy wastes, shouldn't move the user n or e
+                ArrowUp: () => {
+                    xloc = Math.min(Math.max(xloc + dirX[direction], 1), 64);
+                    yloc = Math.min(Math.max(yloc + dirY[direction], 1), 61);
+                },
+                ArrowDown: () => {
+                    xloc = Math.min(Math.max(xloc - dirX[direction], 1), 64);
+                    yloc = Math.min(Math.max(yloc - dirY[direction], 1), 61);
+                },
+                ArrowLeft: () => direction = (direction - 1 + 8) % 8,
+                ArrowRight: () => direction = (direction + 1) % 8,
+            };
+
+            if (move[event.key]) {
+                move[event.key]();
+                redraw();
+            }
+        });
+
+        //Current location and orientation
+        let xloc = 13;
+        let yloc = 40;
+        let direction = 4;
+
+        let yvista = 6; // depth, from 1 to yvista , 6 is original LOM
+        let xvista = 10; // either side, from 0 to xvista on either side, 6 is original LOM, 10 allow for wide-screen vista
+
+        const mapHeight = mapdata.length;
+        const mapWidth = mapdata[0].length;
+        const dirX = [0, 1, 1, 1, 0, -1, -1, -1];
+        const dirY = [-1, -1, 0, 1, 1, 1, 0, -1];
+        const directions = ['North', 'Northeast', 'East', 'Southeast', 'South', 'Southwest', 'West', 'Northwest'];
+        let baseMaxWidth;
+        const caseProperties = {
+            '0': { maxWidthMultiplier: 9 / 8,   joinword: 'at' },   //mountains
+            '1': { maxWidthMultiplier: 1,       joinword: 'at' },   //citadels
+            '2': { maxWidthMultiplier: 9 / 8 ,  joinword: 'in' },   //forest
+            '3': { maxWidthMultiplier: 1,       joinword: 'at' },   //henge
+            '4': { maxWidthMultiplier: 1 / 5,   joinword: 'at' },   //tower
+            '5': { maxWidthMultiplier: 1,       joinword: 'at' },   //village
+            '6': { maxWidthMultiplier: 1,       joinword: 'on' },   //downs
+            '7': { maxWidthMultiplier: 9 / 16,   joinword: 'at'  },  //keep
+            '8': { maxWidthMultiplier: 1 / 3,   joinword: 'at'  },  //snowhall
+            '9': { maxWidthMultiplier: 4 / 5,   joinword: 'at'  },  //lake
+            'a': { maxWidthMultiplier: 9 / 8,   joinword: 'at' , filename: 'a/000.png' }, //icywastes
+            'b': { maxWidthMultiplier: 3 / 4,   joinword: 'in'  },  //ruins
+            'c': { maxWidthMultiplier: 1,       joinword: 'at'  },  //lith
+            'd': { maxWidthMultiplier: 2 / 3,   joinword: 'at'  },  //cavern
+            'e': { skip: true , joinword: 'on'},
+            'f': { skip: true , joinword: 'on'},
+        };
+
+        async function redraw() {
+            const canvas = document.getElementById('myCanvas');
+            const ctx = canvas.getContext('2d');
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            baseMaxWidth = canvas.width / 3;
+            // Draw the sky
+            const bottomCenter = { x: canvas.width / 2, y: canvas.height };
+            await drawRawImageOnCanvas(canvas, 'assets/sky/000.png', 1280, bottomCenter);
+
+            //Spectrum blue sky
+            //ctx.fillStyle = '#0000d8';
+            //await ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw ground
+            ctx.fillStyle = 'white';
+            await ctx.fillRect(0, canvas.height / 3, canvas.width, (canvas.height * 2) / 3);
+
+            
+            let i, j;
+            //Cardinal directions are handled separately from intercardinal directions
+            if (direction % 2 == 0) { //N,S,E,W
+                for (let step = yvista; step >= 1; step--) {
+                    for (let offset = -xvista; offset <= xvista; offset++) {
+                        const offsetX = -dirY[direction];
+                        const offsetY = dirX[direction];
+                        dx = dirX[direction] * step + offsetX * offset;
+                        dy = dirY[direction] * step + offsetY * offset;
+                        i = Math.round(xloc + dx);
+                        j = Math.round(yloc + dy);
+                        await drawCoordinate(canvas, i, j, step, offset);
+
+                    }
+                }
+            } else { // NE, NW, SE, SW
+                for (let step = yvista; step >= 1; step--) {
+                    for (let offset = 0; offset <= xvista; offset++) {
+                        const offsetX = dirX[direction];
+                        const offsetY = dirY[direction];
+                        i = Math.round(xloc + offsetX * step - offsetX * offset);
+                        j = Math.round(yloc + offsetY * step);
+                        await drawCoordinate(canvas, i, j, step, offsetX * offsetY * offset);
+                        i = Math.round(xloc + offsetX * step);
+                        j = Math.round(yloc + offsetY * step - offsetY * offset);
+                        await drawCoordinate(canvas, i, j, step, -offsetX * offsetY * offset);
+                    }
+                }
+            }
+            writeText();
+        }
+
+        function writeText(){
+            const caseletter=mapdata[yloc][xloc][0];
+            const text = '&nbsp;He stands ' + caseProperties[caseletter].joinword + ' ' + maplocations[yloc][xloc] + ' looking ' + directions[direction] + ' to ' + maplocations[yloc + dirY[direction]][xloc + dirX[direction]];
+            document.getElementById('fixedTextDiv').innerHTML = "<span style='color: yellow;'>Lord Xandarius</span><br/>" + text;
+        }
+
+        async function drawCoordinate(canvas, i, j, step, offset) {
+
+            let filename = caseProperties['a'].filename; // Default to icy wastes
+
+            if (i >= 0 && j >= 0 && i < mapWidth && j < mapHeight) {
+                filename = mapdata[j][i];
+            }
+
+            const caseletter = filename[0];
+            if (caseProperties[caseletter]?.skip) return;
+            if (caseProperties[caseletter]?.filename) filename = caseProperties[caseletter].filename;
+
+
+            const maxwidth = baseMaxWidth * (caseProperties[caseletter]?.maxWidthMultiplier || 1);
+
+            try {
+                await drawImage(canvas, `assets/${filename}`, maxwidth, step, offset, direction);
+            } catch (err) {
+                console.error(`Error drawing image for ${filename}:`, err);
+            }
+        }
+
+        // Function to draw an image on the canvas
+        async function drawImage(
+            canvas,
+            imagePath,
+            maxWidth,
+            step,
+            offset,
+            direction
+        ) {
+            const steps = step;
+            const xsteps = offset;
+
+            // Scale the image based on distance
+            const desiredWidth = maxWidth / steps; // Further away is smaller
+
+            let maxOnScreen = baseMaxWidth;
+            // Calculate position on canvas
+            const xlocation = canvas.width / 2 + (maxOnScreen * xsteps) / steps;
+            const ylocation = canvas.height / 3 + (canvas.height / 4) / Math.pow(2, steps - 1);
+            const newLocation = {
+                x: xlocation,
+                y: ylocation,
+            };
+
+            // Load and draw the image
+            await drawRawImageOnCanvas(canvas, imagePath, desiredWidth, newLocation, 0.5 + steps / 8);
+        }
+
+        async function drawRawImageOnCanvas(
+            canvas,
+            imagePath,
+            desiredWidth,
+            newLocation,
+            blurAmount
+        ) {
+            const ctx = canvas.getContext('2d');
+
+            // Load the image using await
+            const img = await loadImage(imagePath);
+
+            const aspectRatio = img.height / img.width;
+            const desiredHeight = desiredWidth * aspectRatio;
+
+            // Calculate the top-left corner for the image placement
+            const x = newLocation.x - desiredWidth / 2;
+            const y = newLocation.y - desiredHeight;
+
+            ctx.filter = `blur(${blurAmount}px)`;
+            //ctx.filter = `blur(5px)`;
+            // Draw the image on the canvas
+            ctx.drawImage(img, x, y, desiredWidth, desiredHeight);
+        }
+
+        const imageCache = new Map();
+
+        function loadImage(imagePath) {
+            if (imageCache.has(imagePath)) {
+                return Promise.resolve(imageCache.get(imagePath));
+            }
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    imageCache.set(imagePath, img);
+                    resolve(img);
+                };
+                img.onerror = reject;
+                img.src = imagePath;
+            });
+        }
+
+
+    </script>
+
+
+</body>
+
+</html>
