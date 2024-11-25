@@ -1,54 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<style>
-    @font-face {
-        font-family: 'Birch Leaf';
-        src: url('assets/BirchLeaf.woff') format('woff');
-    }
-
-    /* Styling for the fixed div */
-    #fixedTextDiv {
-        position: absolute;
-        /* Keeps it fixed in place */
-        top: 20px;
-        /* Distance from the top of the viewport */
-        left: 20px;
-        /* Distance from the left of the viewport */
-        color: white;
-        /* Text color */
-        font-family: 'Birch Leaf', sans-serif;
-        /* Font family */
-        font-size: 24px;
-        /* Font size */
-        font-weight: normal;
-        /* Bold text */
-        padding: 10px;
-        /* Padding around the text */
-        z-index: 1000;
-        /* Keeps it on top of other elements */
-    }
-</style>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lords Of Midnight Map With AI Artwork Navigator</title>
+    <style>
+        @font-face {
+            font-family: 'Birch Leaf';
+            src: url('assets/BirchLeaf.woff') format('woff');
+        }
+
+        #fixedTextDiv {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-family: 'Birch Leaf', sans-serif;
+            font-size: 24px;
+            padding: 10px;
+            z-index: 1000;
+        }
+
+        #progressContainer {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            background-color: #333;
+            border: 1px solid #fff;
+            padding: 10px;
+            z-index: 2000;
+            display: none;
+        }
+
+        #progressBar {
+            width: 0%;
+            height: 20px;
+            background-color: yellow;
+        }
+
+        #progressText {
+            text-align: center;
+            color: white;
+            font-family: 'Birch Leaf', sans-serif;
+        }
+    </style>
 </head>
 
 <body>
     <canvas id="myCanvas" width="1280" height="720" style="border:1px solid black;"></canvas>
-    <div id="fixedTextDiv">
-
+    <div id="fixedTextDiv"></div>
+    <div id="progressContainer">
+        <div id="progressText">Loading...</div>
+        <div id="progressBar"></div>
     </div>
+
     <script src="map.js"></script>
     <script src="locations.js"></script>
     <script>
+        const imageCache = new Map();
 
         window.onload = async function () {
+            await preloadImages();
+            document.getElementById("progressContainer").style.display = "none";
             redraw();
         };
 
+        async function preloadImages() {
+            const progressContainer = document.getElementById("progressContainer");
+            const progressBar = document.getElementById("progressBar");
+            const progressText = document.getElementById("progressText");
+            progressContainer.style.display = "block";
+
+            let totalImages = 0;
+            let loadedImages = 0;
+
+            // Collect all filenames from the map
+            const filenames = new Set();
+            for (let j = 0; j < mapdata.length; j++) {
+                for (let i = 0; i < mapdata[j].length; i++) {
+                    let filename = mapdata[j][i];
+                    const caseletter = filename[0];
+                    if (caseProperties[caseletter]?.skip) continue;
+                    if (caseProperties[caseletter]?.filename) {
+                        filename = caseProperties[caseletter].filename;
+                    }
+                    filenames.add(filename);
+                }
+            }
+
+            totalImages = filenames.size;
+
+            // Preload each image
+            for (const filename of filenames) {
+                try {
+                    await loadImage(`assets/${filename}`);
+                    loadedImages++;
+                } catch (err) {
+                    console.error(`Failed to load image: ${filename}`, err);
+                }
+                const progress = Math.round((loadedImages / totalImages) * 100);
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `Loading... ${progress}%`;
+            }
+        }
+
+        function loadImage(imagePath) {
+            if (imageCache.has(imagePath)) {
+                return Promise.resolve(imageCache.get(imagePath));
+            }
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    imageCache.set(imagePath, img);
+                    resolve(img);
+                };
+                img.onerror = reject;
+                img.src = imagePath;
+            });
+        }
         document.addEventListener('keydown', (event) => {
             const move = {
                 //todo, should check user doesn't walk on icy wastes in main map area
@@ -236,7 +308,7 @@
             ctx.drawImage(img, x, y, desiredWidth, desiredHeight);
         }
 
-        const imageCache = new Map();
+        /*const imageCache = new Map();
 
         function loadImage(imagePath) {
             if (imageCache.has(imagePath)) {
@@ -251,7 +323,7 @@
                 img.onerror = reject;
                 img.src = imagePath;
             });
-        }
+        }*/
 
 
     </script>
