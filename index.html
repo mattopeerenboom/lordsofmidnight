@@ -50,7 +50,7 @@
 </head>
 
 <body>
-    <canvas id="myCanvas" width="1280" height="720" style="border:1px solid black;"></canvas>
+    <canvas id="myCanvas" width="1280" height="720" style="border:0px solid black;"></canvas>
     <div id="fixedTextDiv"></div>
     <div id="progressContainer">
         <div id="progressText">Loading...</div>
@@ -158,22 +158,22 @@
         const directions = ['North', 'Northeast', 'East', 'Southeast', 'South', 'Southwest', 'West', 'Northwest'];
         let baseMaxWidth;
         const caseProperties = {
-            '0': { maxWidthMultiplier: 9 / 8,   joinword: 'at' },   //mountains
-            '1': { maxWidthMultiplier: 1,       joinword: 'at' },   //citadels
-            '2': { maxWidthMultiplier: 9 / 8 ,  joinword: 'in' },   //forest
-            '3': { maxWidthMultiplier: 1,       joinword: 'at' },   //henge
-            '4': { maxWidthMultiplier: 1 / 5,   joinword: 'at' },   //tower
-            '5': { maxWidthMultiplier: 1,       joinword: 'at' },   //village
-            '6': { maxWidthMultiplier: 1,       joinword: 'on' },   //downs
-            '7': { maxWidthMultiplier: 9 / 16,   joinword: 'at'  },  //keep
-            '8': { maxWidthMultiplier: 1 / 3,   joinword: 'at'  },  //snowhall
-            '9': { maxWidthMultiplier: 4 / 5,   joinword: 'at'  },  //lake
-            'a': { maxWidthMultiplier: 9 / 8,   joinword: 'at' , filename: 'a/000.png' }, //icywastes
-            'b': { maxWidthMultiplier: 3 / 4,   joinword: 'in'  },  //ruins
-            'c': { maxWidthMultiplier: 1,       joinword: 'at'  },  //lith
-            'd': { maxWidthMultiplier: 2 / 3,   joinword: 'at'  },  //cavern
-            'e': { skip: true , joinword: 'on'},
-            'f': { skip: true , joinword: 'on'},
+            '0': { maxWidthMultiplier: 9 / 8, joinword: 'at' },   //mountains
+            '1': { maxWidthMultiplier: 1, joinword: 'at' },   //citadels
+            '2': { maxWidthMultiplier: 9 / 8, joinword: 'in' },   //forest
+            '3': { maxWidthMultiplier: 1, joinword: 'at' },   //henge
+            '4': { maxWidthMultiplier: 1 / 5, joinword: 'at' },   //tower
+            '5': { maxWidthMultiplier: 1, joinword: 'at' },   //village
+            '6': { maxWidthMultiplier: 1, joinword: 'on' },   //downs
+            '7': { maxWidthMultiplier: 9 / 16, joinword: 'at' },  //keep
+            '8': { maxWidthMultiplier: 1 / 3, joinword: 'at' },  //snowhall
+            '9': { maxWidthMultiplier: 4 / 5, joinword: 'at' },  //lake
+            'a': { maxWidthMultiplier: 9 / 8, joinword: 'at', filename: 'a/000.png' }, //icywastes
+            'b': { maxWidthMultiplier: 3 / 4, joinword: 'in' },  //ruins
+            'c': { maxWidthMultiplier: 1, joinword: 'at' },  //lith
+            'd': { maxWidthMultiplier: 2 / 3, joinword: 'at' },  //cavern
+            'e': { skip: true, joinword: 'on' },
+            'f': { skip: true, joinword: 'on' },
         };
 
         async function redraw() {
@@ -194,7 +194,7 @@
             ctx.fillStyle = 'white';
             await ctx.fillRect(0, canvas.height / 3, canvas.width, (canvas.height * 2) / 3);
 
-            
+
             let i, j;
             //Cardinal directions are handled separately from intercardinal directions
             if (direction % 2 == 0) { //N,S,E,W
@@ -227,8 +227,8 @@
             writeText();
         }
 
-        function writeText(){
-            const caseletter=mapdata[yloc][xloc][0];
+        function writeText() {
+            const caseletter = mapdata[yloc][xloc][0];
             const text = '&nbsp;He stands ' + caseProperties[caseletter].joinword + ' ' + maplocations[yloc][xloc] + ' looking ' + directions[direction] + ' to ' + maplocations[yloc + dirY[direction]][xloc + dirX[direction]];
             document.getElementById('fixedTextDiv').innerHTML = "<span style='color: yellow;'>Lord Xandarius</span><br/>" + text;
         }
