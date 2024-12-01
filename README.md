@@ -2,7 +2,7 @@
 
 [Try it here](https://mattopeerenboom.github.io/lordsofmidnight/)
 
-![Opening Location](assets/lomnew.jpg)(https://mattopeerenboom.github.io/lordsofmidnight/)
+[![Opening Location](assets/lomnew.jpg)](https://mattopeerenboom.github.io/lordsofmidnight/)
 
 This is a JavaScript implementation of [Mike Singleton's Landscaping technique](https://www.icemark.com/tower/landscaping.htm).
 
