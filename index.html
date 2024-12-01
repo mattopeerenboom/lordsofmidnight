@@ -74,10 +74,6 @@
             const progressText = document.getElementById("progressText");
             progressContainer.style.display = "block";
 
-            let totalImages = 0;
-            let loadedImages = 0;
-
-            // Collect all filenames from the map
             const filenames = new Set();
             for (let j = 0; j < mapdata.length; j++) {
                 for (let i = 0; i < mapdata[j].length; i++) {
@@ -91,20 +87,23 @@
                 }
             }
 
-            totalImages = filenames.size;
+            const totalImages = filenames.size;
+            let loadedImages = 0;
 
-            // Preload each image
-            for (const filename of filenames) {
-                try {
-                    await loadImage(`assets/${filename}`);
+            const imagePromises = Array.from(filenames).map(filename =>
+                loadImage(`assets/${filename}`).then(() => {
                     loadedImages++;
-                } catch (err) {
+                    const progress = Math.round((loadedImages / totalImages) * 100);
+                    progressBar.style.width = `${progress}%`;
+                    progressText.textContent = `Loading... ${progress}%`;
+                }).catch(err => {
                     console.error(`Failed to load image: ${filename}`, err);
-                }
-                const progress = Math.round((loadedImages / totalImages) * 100);
-                progressBar.style.width = `${progress}%`;
-                progressText.textContent = `Loading... ${progress}%`;
-            }
+                })
+            );
+
+            await Promise.all(imagePromises);
+            progressContainer.style.display = "none";
+            redraw();
         }
 
         function loadImage(imagePath) {
